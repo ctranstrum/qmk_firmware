@@ -34,6 +34,9 @@ for more options.
 
 #define COMBO_COUNT 1
 
+// Mouse keys
+#define MOUSEKEY_MOVE_DELTA 5
+#define MOUSEKEY_MAX_SPEED 7
 
 // RGB matrix support
 #ifdef RGB_MATRIX_ENABLE
