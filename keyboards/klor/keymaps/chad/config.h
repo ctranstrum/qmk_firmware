@@ -18,6 +18,9 @@ for more options.
 // Number of ms before a tap becomes a hold
 #define TAPPING_TERM 200
 
+// Disable tap-and-hold as a way to repeat-tap
+#define QUICK_TAP_TERM 0
+
 // Enable rapid switch from tap to hold, disables double tap hold auto-repeat.
 #define TAPPING_FORCE_HOLD
 
