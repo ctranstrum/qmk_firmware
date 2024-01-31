@@ -21,8 +21,8 @@ for more options.
 // Disable tap-and-hold as a way to repeat-tap
 #define QUICK_TAP_TERM 0
 
-// Enable rapid switch from tap to hold, disables double tap hold auto-repeat.
-#define TAPPING_FORCE_HOLD
+// Turn off one-shot modifiers after 5 seconds
+#define ONESHOT_TIMEOUT 5000
 
 // Auto Shift
 #define NO_AUTO_SHIFT_ALPHA
