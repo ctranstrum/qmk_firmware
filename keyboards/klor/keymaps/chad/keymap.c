@@ -96,18 +96,26 @@ typedef struct {
 
 enum tap_dance_codes {
     TD_NAV_SHIFT_CAPSWORD,
-    TD_KEYBD_ASTERISK_AT,
+    TD_NUM_PAREN,
+    TD_FN_ASTERISK,
+    TD_MOUSE_PAREN
 };
 
 // references for all tap dance functions ... dunno, must be a C thing
 td_state_t cur_dance(tap_dance_state_t *state);
 void td_nsc_finished(tap_dance_state_t *state, void *user_data);
 void td_nsc_reset(tap_dance_state_t *state, void *user_data);
-void td_kaa_finished(tap_dance_state_t *state, void *user_data);
-void td_kaa_reset(tap_dance_state_t *state, void *user_data);
+void td_np_finished(tap_dance_state_t *state, void *user_data);
+void td_np_reset(tap_dance_state_t *state, void *user_data);
+void td_fa_finished(tap_dance_state_t *state, void *user_data);
+void td_fa_reset(tap_dance_state_t *state, void *user_data);
+void td_mp_finished(tap_dance_state_t *state, void *user_data);
+void td_mp_reset(tap_dance_state_t *state, void *user_data);
 
 #define TD_NSC TD(TD_NAV_SHIFT_CAPSWORD)
-#define TD_KAA TD(TD_KEYBD_ASTERISK_AT)
+#define TD_NP TD(TD_NUM_PAREN)
+#define TD_FA TD(TD_FN_ASTERISK)
+#define TD_MP TD(TD_MOUSE_PAREN)
 
 // ┌───────────────────────────────────────────────────────────┐
 // │ d e f i n e   m a c r o n a m e s                         │
@@ -149,12 +157,14 @@ void td_kaa_reset(tap_dance_state_t *state, void *user_data);
 // LAYER HOLD TAPS ├───────────────────────────────────────────┐
 
 #define LT_NAV LT(_NAV, KC_LSFT)
-#define LT_NUM LT(_NUM, KC_BACKSPACE)
-#define LT_FN LT(_FUNC, KC_TAB)
+#define LT_NUM LT(_NUM, KC_LEFT_PAREN)
+#define LT_FN LT(_FUNC, KC_ASTERISK)
 #define LT_SYM LT(_SYM, KC_SPACE)
-#define LT_MOUSE LT(_MOUSE, KC_ENTER)
-#define LT_VIM LT(_VIM, KC_ESC)
-#define LT_KBD LT(_KEYBD, KC_ASTERISK)
+#define LT_MOUSE LT(_MOUSE, KC_RIGHT_PAREN)
+#define LT_VIM_E LT(_VIM, KC_ESC)
+#define LT_VIM_T LT(_VIM, KC_TAB)
+#define LT_KBD_B LT(_KEYBD, KC_BACKSPACE)
+#define LT_KBD_E LT(_KEYBD, KC_ENTER)
 
 // MAC KEYS ├──────────────────────────────────────────────────┐
 
@@ -181,8 +191,7 @@ const custom_shift_key_t custom_shift_keys[] = {
     {KC_TILDE, KC_GRAVE},
     {LALT_T(KC_COMMA), KC_SEMICOLON},
     {LCTL_T(KC_DOT), KC_COLON},
-    {LSFT_T(KC_SLASH), KC_BACKSLASH},
-    {LT_KBD, KC_AT}
+    {LSFT_T(KC_SLASH), KC_BACKSLASH}
 };
 
 uint8_t NUM_CUSTOM_SHIFT_KEYS = sizeof(custom_shift_keys) / sizeof(custom_shift_key_t);
@@ -247,21 +256,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
              │    Q    │    W    │    F    │    P    │    B    │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │    J    │    L    │    U    │    Y    │   ' "   │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │   [ {   │    A    │    R    │    S    │    T    │    G    ├─╯                ╰─┤    M    │    N    │    E    │    I    │    O    │   ] }   │
+   │   ESC   │    A    │    R    │    S    │    T    │    G    │ │                │ │    M    │    N    │    E    │    I    │    O    │ BACKSPC │
+   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │  keybd  │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │   ( <   │    Z    │    X    │    C    │    D    │    V    ││  ▶ ||  ││  MUTE  ││    K    │    H    │   , :   │   . :   │   / \   │   ) >   │
-   │         │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │         │
+   │   TAB   │    Z    │    X    │    C    │    D    │    V    ││  ▶ ||  ││  MUTE  ││    K    │    H    │   , :   │   . :   │   / \   │  ENTER  │
+   │   vim   │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┤╰────────╯╰────────╯├─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │   ESC   │ BACKSPC │  SHIFT  │   TAB   ││    -    │  SPACE  │  ENTER  │    *    │
-                                 │   vim   │   num   │   nav   │    fn   ││         │   sym   │  mouse  │  keybd  │
+                                 │    {    │    (    │  SHIFT  │    *    ││    -    │  SPACE  │    )    │    }    │
+                                 │         │   num   │   nav   │    fn   ││         │   sym   │  mouse  │         │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_COLEMAK] = LAYOUT_polydactyl(
  //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
               KC_Q,     KC_W,     KC_F,     KC_P,     KC_B,                          KC_J,     KC_L,     KC_U,     KC_Y,     KC_QUOT,
-    KC_LBRC,  KC_A,     KC_R,     KC_S,     KC_T,     KC_G,                          KC_M,     KC_N,     KC_E,     KC_I,     KC_O,     KC_RBRC,
-    KC_LPRN,  MT_SZ,    MT_CX,    MT_AC,    MT_GD,    MT_RV,    KC_MPLY,   KC_MUTE,  MT_RK,    MT_GH,    MT_ACOM,  MT_CDOT,  MT_SSLH,  KC_RPRN,
-                                  LT_VIM,   LT_NUM,   TD_NSC,   LT_FN,     KC_MINUS, LT_SYM,   LT_MOUSE, TD_KAA
+    LT_VIM_E, KC_A,     KC_R,     KC_S,     KC_T,     KC_G,                          KC_M,     KC_N,     KC_E,     KC_I,     KC_O,     LT_KBD_B,
+    LT_VIM_T, MT_SZ,    MT_CX,    MT_AC,    MT_GD,    MT_RV,    KC_MPLY,   KC_MUTE,  MT_RK,    MT_GH,    MT_ACOM,  MT_CDOT,  MT_SSLH,  LT_KBD_E,
+                                  KC_LCBR,  TD_NP,    TD_NSC,   TD_FA,     KC_MINUS, LT_SYM,   TD_MP,    KC_RCBR
  ),
 
  /*
@@ -273,13 +283,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
              │    Q    │    W    │    E    │    R    │    T    │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │    Y    │    U    │    I    │    O    │    P    │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │   [ {   │    A    │    S    │    D    │    F    │    G    ├─╯                ╰─┤    H    │    J    │    K    │    L    │   ' "   │   ] }   │
+   │   ESC   │    A    │    S    │    D    │    F    │    G    │ │                │ │    H    │    J    │    K    │    L    │   ' "   │ BACKSPC │
+   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │  keybd  │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │   ( <   │    Z    │    X    │    C    │    V    │    B    ││  ▶ ||  ││  MUTE  ││    N    │    M    │   , ;   │   . :   │   / \   │   ) >   │
-   │         │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │         │
+   │   TAB   │    Z    │    X    │    C    │    V    │    B    ││  ▶ ||  ││  MUTE  ││    N    │    M    │   , ;   │   . :   │   / \   │  ENTER  │
+   │   vim   │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │   ESC   │ BACKSPC │  SHIFT  │   TAB   ││    -    │  SPACE  │  ENTER  │    *    │
-                                 │   vim   │   num   │   nav   │    fn   ││         │   sym   │  mouse  │  keybd  │
+                                 │    {    │    (    │  SHIFT  │    *    ││    -    │  SPACE  │    )    │    }    │
+                                 │         │   num   │   nav   │    fn   ││         │   sym   │  mouse  │         │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_QWERTY] = LAYOUT_polydactyl(
@@ -299,13 +310,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
              │   ' "   │   , ;   │   . :   │    P    │    Y    │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │    F    │    G    │    C    │    R    │    L    │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │   [ {   │    A    │    O    │    E    │    U    │    I    ├─╯                ╰─┤    D    │    H    │    T    │    N    │    S    │   ] }   │
+   │   ESC   │    A    │    O    │    E    │    U    │    I    │ │                │ │    D    │    H    │    T    │    N    │    S    │ BACKSPC │
+   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │  keybd  │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │   ( <   │   / \   │    Q    │    J    │    K    │    X    ││  ▶ ||  ││  MUTE  ││    B    │    M    │    W    │    V    │    Z    │   ) >   │
-   │         │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │         │
+   │   TAB   │   / \   │    Q    │    J    │    K    │    X    ││  ▶ ||  ││  MUTE  ││    B    │    M    │    W    │    V    │    Z    │  ENTER  │
+   │   vim   │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │   ESC   │ BACKSPC │  SHIFT  │   TAB   ││    -    │  SPACE  │  ENTER  │    *    │
-                                 │   vim   │   num   │   nav   │    fn   ││         │   sym   │  mouse  │  keybd  │
+                                 │    {    │    (    │  SHIFT  │    *    ││    -    │  SPACE  │    )    │    }    │
+                                 │         │   num   │   nav   │    fn   ││         │   sym   │  mouse  │         │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_DVORAK] = LAYOUT_polydactyl(
@@ -419,20 +431,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    │ s y m b o l                                               │
    └───────────────────────────────────────────────────────────┘
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
-             │         │         │    +    │         │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │
+             │         │    #    │    +    │    %    │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
    │    `    │    ^    │    @    │    !    │    =    │    $    ├─╯                ╰─┤         │         │         │         │         │         │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │    ~    │    #    │    %    │    -    │    _    │    ?    ││        ││        ││  R ALT  │   CMD   │   ALT   │   CTRL  │         │         │
+   │    ~    │    <    │    >    │    [    │    ]    │    ?    ││        ││        ││  R ALT  │   CMD   │   ALT   │   CTRL  │         │         │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
                                  │    =>   │    |    │    &    │    _    ││         │   ###   │         │         │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_SYM] = LAYOUT_polydactyl(
  //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
-              XXXXXXX,  XXXXXXX,  KC_PLUS,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+              XXXXXXX,  KC_HASH,  KC_PLUS,  KC_PERC,  XXXXXXX,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
     KC_GRAVE, KC_CIRC,  KC_AT,    KC_EXLM,  KC_EQUAL, KC_DLR,                        XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    KC_TILDE, KC_HASH,  KC_PERC,  KC_MINUS, KC_UNDS,  KC_QUES,  XXXXXXX,   XXXXXXX,  KC_RALT,  KC_LCMD,  KC_LALT,  KC_LCTL,  XXXXXXX,  XXXXXXX,
+    KC_TILDE, KC_LT,    KC_GT,    KC_LBRC,  KC_RBRC,  KC_QUES,  XXXXXXX,   XXXXXXX,  KC_RALT,  KC_LCMD,  KC_LALT,  KC_LCTL,  XXXXXXX,  XXXXXXX,
                                   ARROW_FN, KC_PIPE,  KC_AMPR,  KC_UNDS,   XXXXXXX,  _______,  XXXXXXX,  XXXXXXX
  ),
 
@@ -467,20 +479,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    │ k e y b o a r d                                           │
    └───────────────────────────────────────────────────────────┘
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
-             │  qwerty │         │ scrfile │  launch │ rgb tog │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │
+             │  qwerty │         │ scrfile │         │  launch │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │  brt +  │         │         │ scrcopy │         │  rgb +  ├─╯                ╰─┤         │         │         │         │         │         │
+   │  brt +  │         │         │ scrcopy │         │         ├─╯                ╰─┤         │         │         │         │         │         │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │  brt -  │  jiggle │ micmute │ colemak │  dvorak │  rgb -  ││        ││        ││         │         │         │         │         │         │
+   │  brt -  │  jiggle │ micmute │ colemak │  dvorak │         ││  rgb   ││        ││         │         │         │         │         │         │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
                                  │   lock  │         │ caps lk │  flash  ││         │         │         │   ###   │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_KEYBD] = LAYOUT_polydactyl(
  //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
-              QWERTY,   XXXXXXX,  SCRN_FN,  LAUNCHPD, RGB_TOG,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    KC_BRMU,  XXXXXXX,  XXXXXXX,  SCRN_CP,  XXXXXXX,  RGB_VAI,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    KC_BRMD,  JIGGLE,   MICMUTE,  COLEMAK,  DVORAK,   RGB_VAD,  XXXXXXX,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+              QWERTY,   XXXXXXX,  SCRN_FN,  XXXXXXX,  LAUNCHPD,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    KC_BRMU,  XXXXXXX,  XXXXXXX,  SCRN_CP,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    KC_BRMD,  JIGGLE,   MICMUTE,  COLEMAK,  DVORAK,   XXXXXXX,  RGB_TOG,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
                                   SCRN_LK,  XXXXXXX,  KC_CAPS,  QK_BOOT,   XXXXXXX,  XXXXXXX,  XXXXXXX,  _______
  ),
 
@@ -521,21 +533,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 const ledmap PROGMEM ledmaps[] = {
     [_COLEMAK] = RGB_MATRIX_LAYOUT_LEDMAP(
                     WHT L3, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L3, WHT L3, WHT L1,
-            VLT L1, WHT L3, WHT L3, WHT L3, PNK L3, WHT L3,                 WHT L3, PNK L3, WHT L3, WHT L3, WHT L3, VLT L1,
-            BLU L1, WHT L3, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L1, WHT L1, WHT L1, BLU L1,
-                                    VLT L1, GRN L1, SKY L1, YLW L2, WHT L2, SKY L1, ORG L3, YLW L3
+            VLT L1, WHT L3, WHT L3, WHT L3, PNK L3, WHT L3,                 WHT L3, PNK L3, WHT L3, WHT L3, WHT L3, RED L1,
+            YLW L1, WHT L3, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L1, WHT L1, WHT L1, ORG L1,
+                                    BLU L1, GRN L1, SKY L1, YLW L3, WHT L2, SKY L1, ORG L3, BLU L3
             ),
     [_QWERTY] = RGB_MATRIX_LAYOUT_LEDMAP(
                     WHT L3, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L3, WHT L3, WHT L1,
-            VLT L1, WHT L3, WHT L3, WHT L3, PNK L3, WHT L3,                 WHT L3, PNK L3, WHT L3, WHT L3, WHT L3, VLT L1,
-            BLU L1, WHT L3, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L1, WHT L1, WHT L1, BLU L1,
-                                    VLT L1, GRN L1, SKY L1, YLW L2, WHT L2, SKY L1, ORG L3, YLW L3
+            VLT L1, WHT L3, WHT L3, WHT L3, PNK L3, WHT L3,                 WHT L3, PNK L3, WHT L3, WHT L3, WHT L3, RED L1,
+            YLW L1, WHT L3, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L1, WHT L1, WHT L1, ORG L1,
+                                    BLU L1, GRN L1, SKY L1, YLW L3, WHT L2, SKY L1, ORG L3, BLU L3
             ),
     [_DVORAK] = RGB_MATRIX_LAYOUT_LEDMAP(
                     WHT L1, WHT L1, WHT L1, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L3, WHT L3, WHT L3,
-            VLT L1, WHT L3, WHT L3, WHT L3, PNK L3, WHT L3,                 WHT L3, PNK L3, WHT L3, WHT L3, WHT L3, VLT L1,
-            BLU L1, WHT L1, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L3, WHT L3, WHT L3, BLU L1,
-                                    VLT L1, GRN L1, SKY L1, YLW L2, WHT L2, SKY L1, ORG L3, YLW L3
+            VLT L1, WHT L3, WHT L3, WHT L3, PNK L3, WHT L3,                 WHT L3, PNK L3, WHT L3, WHT L3, WHT L3, RED L1,
+            YLW L1, WHT L1, WHT L3, WHT L3, WHT L3, WHT L3,                 WHT L3, WHT L3, WHT L3, WHT L3, WHT L3, ORG L1,
+                                    BLU L1, GRN L1, SKY L1, YLW L3, WHT L2, SKY L1, ORG L3, BLU L3
             ),
     [_NAV] = RGB_MATRIX_LAYOUT_LEDMAP(
                     ______, ______, ______, ______, ______,                 GRN L3, ______, ______, ______, ______,
@@ -562,9 +574,9 @@ const ledmap PROGMEM ledmaps[] = {
                                     PUR L4, ______, ______, ______, GRN L1, BLU L2, PUR L1, BLU L3
             ),
     [_SYM] = RGB_MATRIX_LAYOUT_LEDMAP(
-                    ______, ______, LIM L2, ______, ______,                 ______, ______, ______, ______, ______,
+                    ______, BLU L2, LIM L2, GRN L1, ______,                 ______, ______, ______, ______, ______,
             WHT L1, ORG L3, SKY L3, WHT L2, YLW L3, GRN L3,                 ______, ______, ______, ______, ______, ______,
-            WHT L1, BLU L2, YLW L3, LIM L1, WHT L1, YLW L1,                 WHT L1, WHT L1, WHT L1, WHT L1, ______, ______,
+            WHT L1, BLU L1, BLU L2, ORG L1, ORG L1, YLW L1,                 WHT L1, WHT L1, WHT L1, WHT L1, ______, ______,
                                     PUR L3, WHT L3, BLU L3, WHT L1, ______, SKY L4, ______, ______
             ),
     [_MOUSE] = RGB_MATRIX_LAYOUT_LEDMAP(
@@ -575,10 +587,10 @@ const ledmap PROGMEM ledmaps[] = {
             ),
     // Note: to test all the colors you can comment out the keyboard map and use the all-colors map instead
     [_KEYBD] = RGB_MATRIX_LAYOUT_LEDMAP(
-                    PNK L3, ______, BLU L3, ORG L3, VLT L1,                 YLW L3, YLW L1, LIM L1, LIM L3, ______,
-            YLW L3, ______, ______, GRN L3, ______, WHT L3,                 ORG L3, ORG L1, GRN L1, GRN L3, SKY L3, SKY L1,
-            YLW L1, ORG L1, PUR L3, PNK L3, PNK L3, WHT L1,                 RED L3, RED L1, BLU L1, BLU L3, PUR L3, PUR L1,
-                                    RED L3, ______, RED L1, VLT L5, PNK L1, PNK L3, VLT L1, VLT L3
+                    PNK L3, ______, GRN L3, ______, ORG L5,                 YLW L3, YLW L1, LIM L1, LIM L3, ______,
+            YLW L3, ______, ______, BLU L3, ______, ______,                 ORG L3, ORG L1, GRN L1, GRN L3, SKY L3, SKY L1,
+            YLW L1, ORG L1, PUR L3, PNK L3, PNK L3, ______,                 RED L3, RED L1, BLU L1, BLU L3, PUR L3, PUR L1,
+                                    RED L5, ______, RED L1, VLT L5, PNK L1, PNK L3, VLT L1, VLT L3
             /*         RED L1, ORG L1, YLW L1, LIM L1, GRN L1,                 SKY L1, BLU L1, PUR L1, VLT L1, PNK L1, */
             /* ______, RED L3, ORG L3, YLW L3, LIM L3, GRN L3,                 SKY L3, BLU L3, PUR L3, VLT L3, PNK L3, ______, */
             /* WHT L1, RED L5, ORG L5, YLW L5, LIM L5, GRN L5,                 SKY L5, BLU L5, PUR L5, VLT L5, PNK L5, WHT L1, */
@@ -778,46 +790,47 @@ void render_os_lock_status(void) {
 int layerstate = 0;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-      switch (get_highest_layer(state)) {
-            case _COLEMAK:
-                strcpy ( layer_state_str, "COLEMAK");
-                break;
-            case _QWERTY:
-                strcpy ( layer_state_str, "QWERTY");
-                break;
-            case _DVORAK:
-                strcpy ( layer_state_str, "DVORAK");
-                break;
-            case _NAV:
-                clear_oneshot_mods();
-                strcpy ( layer_state_str, "NAVIGATION");
-                break;
-            case _NUM:
-                clear_oneshot_mods();
-                strcpy ( layer_state_str, "NUMBER");
-                break;
-            case _FUNC:
-                clear_oneshot_mods();
-                strcpy ( layer_state_str, "FUNCTION");
-                break;
-            case _VIM:
-                strcpy ( layer_state_str, "VIM");
-                break;
-            case _SYM:
-                clear_oneshot_mods();
-                strcpy ( layer_state_str, "SYMBOL");
-                break;
-            case _MOUSE:
-                strcpy ( layer_state_str, "MOUSE");
-                break;
-            case _KEYBD:
-                strcpy ( layer_state_str, "KEYBOARD");
-                break;
-            default:
-                strcpy ( layer_state_str, "XXXXXX");
-        }
-      if (dmacro_num < 1) {
-          strcpy ( o_text, layer_state_str );
+    layerstate = get_highest_layer(state);
+    switch (layerstate) {
+        case _COLEMAK:
+            strcpy ( layer_state_str, "COLEMAK");
+            break;
+        case _QWERTY:
+            strcpy ( layer_state_str, "QWERTY");
+            break;
+        case _DVORAK:
+            strcpy ( layer_state_str, "DVORAK");
+            break;
+        case _NAV:
+            clear_oneshot_mods();
+            strcpy ( layer_state_str, "NAVIGATION");
+            break;
+        case _NUM:
+            clear_oneshot_mods();
+            strcpy ( layer_state_str, "NUMBER");
+            break;
+        case _FUNC:
+            clear_oneshot_mods();
+            strcpy ( layer_state_str, "FUNCTION");
+            break;
+        case _VIM:
+            strcpy ( layer_state_str, "VIM");
+            break;
+        case _SYM:
+            clear_oneshot_mods();
+            strcpy ( layer_state_str, "SYMBOL");
+            break;
+        case _MOUSE:
+            strcpy ( layer_state_str, "MOUSE");
+            break;
+        case _KEYBD:
+            strcpy ( layer_state_str, "KEYBOARD");
+            break;
+        default:
+            strcpy ( layer_state_str, "XXXXXX");
+    }
+    if (dmacro_num < 1) {
+        strcpy ( o_text, layer_state_str );
     }
     return state;
     // return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
@@ -1191,34 +1204,83 @@ void td_nsc_reset(tap_dance_state_t *state, void *user_data) {
     }
 }
 
-// KEYBD asterisk at
-static td_tap_t td_kaa_state = {
+// NUM paren
+static td_tap_t td_np_state = {
     .is_press_action = true,
     .state = TD_NONE
 };
 
-void td_kaa_finished(tap_dance_state_t *state, void *user_data) {
-    td_kaa_state.state = cur_dance(state);
-    const uint8_t mods = get_mods() | get_oneshot_mods() | get_weak_mods();
-    switch (td_kaa_state.state) {
-        case TD_HOLD: layer_on(_KEYBD); break;
-        case TD_TAP: SEND_STRING(mods & MOD_BIT(KC_LSFT) ? "@" : "*"); break;
-        case TD_DOUBLE_TAP: SEND_STRING(mods & MOD_BIT(KC_LSFT) ? "@@" : "**"); break;
-        case TD_MORE: SEND_STRING(mods & MOD_BIT(KC_LSFT) ? "@@@" : "***"); break;
+void td_np_finished(tap_dance_state_t *state, void *user_data) {
+    td_np_state.state = cur_dance(state);
+    switch (td_np_state.state) {
+        case TD_HOLD: clear_oneshot_mods(); layer_on(_NUM); break;
+        case TD_TAP: SEND_STRING("("); break;
+        case TD_DOUBLE_TAP: SEND_STRING("(("); break;
+        case TD_MORE: SEND_STRING("((("); break;
         default: break;
     }
 }
 
-void td_kaa_reset(tap_dance_state_t *state, void *user_data) {
-    switch (td_kaa_state.state) {
-        case TD_HOLD: layer_off(_KEYBD); break;
+void td_np_reset(tap_dance_state_t *state, void *user_data) {
+    switch (td_np_state.state) {
+        case TD_HOLD: layer_off(_NUM); break;
+        default: break;
+    }
+}
+
+// FN asterisk
+static td_tap_t td_fa_state = {
+    .is_press_action = true,
+    .state = TD_NONE
+};
+
+void td_fa_finished(tap_dance_state_t *state, void *user_data) {
+    td_fa_state.state = cur_dance(state);
+    switch (td_fa_state.state) {
+        case TD_HOLD: clear_oneshot_mods(); layer_on(_FUNC); break;
+        case TD_TAP: SEND_STRING("*"); break;
+        case TD_DOUBLE_TAP: SEND_STRING("**"); break;
+        case TD_MORE: SEND_STRING("***"); break;
+        default: break;
+    }
+}
+
+void td_fa_reset(tap_dance_state_t *state, void *user_data) {
+    switch (td_fa_state.state) {
+        case TD_HOLD: layer_off(_FUNC); break;
+        default: break;
+    }
+}
+
+// MOUSE paren
+static td_tap_t td_mp_state = {
+    .is_press_action = true,
+    .state = TD_NONE
+};
+
+void td_mp_finished(tap_dance_state_t *state, void *user_data) {
+    td_mp_state.state = cur_dance(state);
+    switch (td_mp_state.state) {
+        case TD_HOLD: clear_oneshot_mods(); layer_on(_MOUSE); break;
+        case TD_TAP: SEND_STRING(")"); break;
+        case TD_DOUBLE_TAP: SEND_STRING("))"); break;
+        case TD_MORE: SEND_STRING(")))"); break;
+        default: break;
+    }
+}
+
+void td_mp_reset(tap_dance_state_t *state, void *user_data) {
+    switch (td_mp_state.state) {
+        case TD_HOLD: layer_off(_MOUSE); break;
         default: break;
     }
 }
 
 tap_dance_action_t tap_dance_actions[] = {
     [TD_NAV_SHIFT_CAPSWORD] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_nsc_finished, td_nsc_reset),
-    [TD_KEYBD_ASTERISK_AT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_kaa_finished, td_kaa_reset),
+    [TD_NUM_PAREN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_np_finished, td_np_reset),
+    [TD_FN_ASTERISK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_fa_finished, td_fa_reset),
+    [TD_MOUSE_PAREN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_mp_finished, td_mp_reset),
 };
 
 
@@ -1235,7 +1297,13 @@ tap_dance_action_t tap_dance_actions[] = {
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) {
-        if (clockwise) {
+        if (layerstate == _KEYBD) {
+            if (clockwise) {
+                rgb_matrix_increase_val();
+            } else {
+                rgb_matrix_decrease_val();
+            }
+        } else if (clockwise) {
             tap_code(KC_MS_WH_DOWN);
         } else {
             tap_code(KC_MS_WH_UP);
