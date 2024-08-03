@@ -44,6 +44,7 @@ enum klor_layers {
     _NUM,
     _FUNC,
     _VIM,
+    _TMUX,
     _SYM,
     _MOUSE,
     _KEYBD,
@@ -75,6 +76,22 @@ enum custom_keycodes {
     VIM_SAVE,
     VIM_QUIT,
     VIM_BAIL,
+    TMUX_1,
+    TMUX_2,
+    TMUX_3,
+    TMUX_4,
+    TMUX_5,
+    TMUX_6,
+    TMUX_7,
+    TMUX_8,
+    TMUX_9,
+    TMUX_10,
+    TMUX_C,
+    TMUX_A,
+    TMUX_D,
+    TMUX_P,
+    TMUX_N,
+    TMUX_LDR,
 };
 
 // ┌───────────────────────────────────────────────────────────┐
@@ -97,7 +114,6 @@ typedef struct {
 enum tap_dance_codes {
     TD_NAV_SHIFT_CAPSWORD,
     TD_NUM_PAREN,
-    TD_FN_ASTERISK,
     TD_MOUSE_PAREN
 };
 
@@ -107,14 +123,11 @@ void td_nsc_finished(tap_dance_state_t *state, void *user_data);
 void td_nsc_reset(tap_dance_state_t *state, void *user_data);
 void td_np_finished(tap_dance_state_t *state, void *user_data);
 void td_np_reset(tap_dance_state_t *state, void *user_data);
-void td_fa_finished(tap_dance_state_t *state, void *user_data);
-void td_fa_reset(tap_dance_state_t *state, void *user_data);
 void td_mp_finished(tap_dance_state_t *state, void *user_data);
 void td_mp_reset(tap_dance_state_t *state, void *user_data);
 
 #define TD_NSC TD(TD_NAV_SHIFT_CAPSWORD)
 #define TD_NP TD(TD_NUM_PAREN)
-#define TD_FA TD(TD_FN_ASTERISK)
 #define TD_MP TD(TD_MOUSE_PAREN)
 
 // ┌───────────────────────────────────────────────────────────┐
@@ -137,6 +150,13 @@ void td_mp_reset(tap_dance_state_t *state, void *user_data);
 #define MT_CDOT MT(MOD_LCTL, KC_DOT)
 #define MT_SSLH MT(MOD_LSFT, KC_SLASH)
 
+// THUMB HOME ROW MODS ├───────────────────────────────────────┐
+
+#define MT_CLB MT(MOD_LCTL, KC_LEFT_CURLY_BRACE)
+#define MT_GSTR MT(MOD_LGUI, KC_ASTERISK)
+#define MT_GMNS MT(MOD_RGUI, KC_MINUS)
+#define MT_ARB MT(MOD_RALT, KC_RIGHT_CURLY_BRACE)
+
 // QWERTY HOME ROW MODS ├──────────────────────────────────────┐
 
 #define MT_GV MT(MOD_LGUI, KC_V)
@@ -156,14 +176,9 @@ void td_mp_reset(tap_dance_state_t *state, void *user_data);
 
 // LAYER HOLD TAPS ├───────────────────────────────────────────┐
 
-#define LT_NAV LT(_NAV, KC_LSFT)
-#define LT_NUM LT(_NUM, KC_LEFT_PAREN)
-#define LT_FN LT(_FUNC, KC_ASTERISK)
 #define LT_SYM LT(_SYM, KC_SPACE)
 #define LT_MOUSE LT(_MOUSE, KC_RIGHT_PAREN)
 #define LT_VIM_E LT(_VIM, KC_ESC)
-#define LT_VIM_T LT(_VIM, KC_TAB)
-#define LT_KBD_B LT(_KEYBD, KC_BACKSPACE)
 #define LT_KBD_E LT(_KEYBD, KC_ENTER)
 
 // MAC KEYS ├──────────────────────────────────────────────────┐
@@ -173,6 +188,10 @@ void td_mp_reset(tap_dance_state_t *state, void *user_data);
 #define SCRN_CP LCMD(LCTL(LSFT(KC_4)))
 #define SCRN_FN LCMD(LSFT(KC_4))
 #define SCRN_LK LCMD(LCTL(KC_Q))
+
+// TMUX leader ├───────────────────────────────────────────────┐
+
+#define TMUX LCTL(KC_B)
 
 // ┌───────────────────────────────────────────────────────────┐
 // │ d e f i n e   c u s t o m   s h i f t   k e y s           │
@@ -257,21 +276,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              │    Q    │    W    │    F    │    P    │    B    │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │    J    │    L    │    U    │    Y    │   ' "   │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
    │   ESC   │    A    │    R    │    S    │    T    │    G    │ │                │ │    M    │    N    │    E    │    I    │    O    │ BACKSPC │
-   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │  keybd  │
+   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │         │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
    │   TAB   │    Z    │    X    │    C    │    D    │    V    ││  ▶ ||  ││  MUTE  ││    K    │    H    │   , :   │   . :   │   / \   │  ENTER  │
-   │   vim   │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
+   │         │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┤╰────────╯╰────────╯├─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
                                  │    {    │    (    │  SHIFT  │    *    ││    -    │  SPACE  │    )    │    }    │
-                                 │         │   num   │   nav   │    fn   ││         │   sym   │  mouse  │         │
+                                 │  ctrl   │   num   │   nav   │   cmd   ││   cmd   │   sym   │  mouse  │  ctrl   │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_COLEMAK] = LAYOUT_polydactyl(
  //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
               KC_Q,     KC_W,     KC_F,     KC_P,     KC_B,                          KC_J,     KC_L,     KC_U,     KC_Y,     KC_QUOT,
-    LT_VIM_E, KC_A,     KC_R,     KC_S,     KC_T,     KC_G,                          KC_M,     KC_N,     KC_E,     KC_I,     KC_O,     LT_KBD_B,
-    LT_VIM_T, MT_SZ,    MT_CX,    MT_AC,    MT_GD,    MT_RV,    KC_MPLY,   KC_MUTE,  MT_RK,    MT_GH,    MT_ACOM,  MT_CDOT,  MT_SSLH,  LT_KBD_E,
-                                  KC_LCBR,  TD_NP,    TD_NSC,   TD_FA,     KC_MINUS, LT_SYM,   TD_MP,    KC_RCBR
+    LT_VIM_E, KC_A,     KC_R,     KC_S,     KC_T,     KC_G,                          KC_M,     KC_N,     KC_E,     KC_I,     KC_O,     KC_BSPC,
+    KC_TAB,   MT_SZ,    MT_CX,    MT_AC,    MT_GD,    MT_RV,    KC_MPLY,   KC_MUTE,  MT_RK,    MT_GH,    MT_ACOM,  MT_CDOT,  MT_SSLH,  LT_KBD_E,
+                                  MT_CLB,   TD_NP,    TD_NSC,   MT_GSTR,   MT_GMNS,  LT_SYM,   TD_MP,    MT_ARB
  ),
 
  /*
@@ -284,13 +303,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              │    Q    │    W    │    E    │    R    │    T    │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │    Y    │    U    │    I    │    O    │    P    │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
    │   ESC   │    A    │    S    │    D    │    F    │    G    │ │                │ │    H    │    J    │    K    │    L    │   ' "   │ BACKSPC │
-   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │  keybd  │
+   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │         │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
    │   TAB   │    Z    │    X    │    C    │    V    │    B    ││  ▶ ||  ││  MUTE  ││    N    │    M    │   , ;   │   . :   │   / \   │  ENTER  │
-   │   vim   │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
+   │         │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
                                  │    {    │    (    │  SHIFT  │    *    ││    -    │  SPACE  │    )    │    }    │
-                                 │         │   num   │   nav   │    fn   ││         │   sym   │  mouse  │         │
+                                 │  ctrl   │   num   │   nav   │   cmd   ││   cmd   │   sym   │  mouse  │  ctrl   │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_QWERTY] = LAYOUT_polydactyl(
@@ -311,13 +330,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              │   ' "   │   , ;   │   . :   │    P    │    Y    │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │    F    │    G    │    C    │    R    │    L    │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
    │   ESC   │    A    │    O    │    E    │    U    │    I    │ │                │ │    D    │    H    │    T    │    N    │    S    │ BACKSPC │
-   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │  keybd  │
+   │   vim   │         │         │         │         │         ├─╯                ╰─┤         │         │         │         │         │         │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
    │   TAB   │   / \   │    Q    │    J    │    K    │    X    ││  ▶ ||  ││  MUTE  ││    B    │    M    │    W    │    V    │    Z    │  ENTER  │
-   │   vim   │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
+   │         │  shift  │  ctrl   │   alt   │   cmd   │  r alt  ││        ││        ││  r alt  │   cmd   │   alt   │  ctrl   │  shift  │  keybd  │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
                                  │    {    │    (    │  SHIFT  │    *    ││    -    │  SPACE  │    )    │    }    │
-                                 │         │   num   │   nav   │    fn   ││         │   sym   │  mouse  │         │
+                                 │  ctrl   │   num   │   nav   │   cmd   ││   cmd   │   sym   │  mouse  │  ctrl   │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_DVORAK] = LAYOUT_polydactyl(
@@ -341,7 +360,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
    │         │  SHIFT  │  CTRL   │   ALT   │   CMD   │  R ALT  ││        ││        ││  PG DN  │         │    ↓    │         │         │   DEL   │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │         │         │   ###   │         ││         │  SPACE  │         │         │
+                                 │         │  func   │   ###   │         ││         │  SPACE  │         │         │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_NAV] = LAYOUT_polydactyl(
@@ -349,7 +368,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
               XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       KC_PGUP,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       KC_HOME,  KC_LEFT,  KC_UP,    KC_RIGHT, KC_END,   KC_BSPC,
     XXXXXXX,  KC_LSFT,  KC_LCTL,  KC_LALT,  KC_LCMD,  KC_RALT,  XXXXXXX,   XXXXXXX,  KC_PGDN,  XXXXXXX,  KC_DOWN,  XXXXXXX,  XXXXXXX,  KC_DEL,
-                                  XXXXXXX,  XXXXXXX,  _______,  XXXXXXX,   XXXXXXX,  KC_SPC,   XXXXXXX,  XXXXXXX
+                                  XXXXXXX,  MO(_NUM), _______,  XXXXXXX,   XXXXXXX,  KC_SPC,   XXXXXXX,  XXXXXXX
  ),
 
  /*
@@ -361,19 +380,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
              │         │         │         │         │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │    /    │    7    │    8    │    9    │    -    │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │         │         │         │         │         │         ├─╯                ╰─┤    *    │    4    │    5    │    6    │    +    │ BACKSPC │
+   │  tmux   │         │         │         │         │         ├─╯                ╰─┤    *    │    4    │    5    │    6    │    +    │ BACKSPC │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │         │  SHIFT  │  CTRL   │   ALT   │   CMD   │  R ALT  ││        ││        ││    :    │    1    │    2    │    3    │    =    │    ;    │
+   │         │         │  CTRL   │   ALT   │   CMD   │  R ALT  ││        ││        ││    :    │    1    │    2    │    3    │    =    │    ;    │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │         │   ###   │         │         ││    ,    │  SPACE  │    0    │    .    │
+                                 │         │   ###   │  func   │         ││    ,    │  SPACE  │    0    │    .    │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_NUM] = LAYOUT_polydactyl(
  //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
               XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       KC_SLSH,  KC_7,     KC_8,     KC_9,     KC_MINUS,
-    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       KC_ASTR,  KC_4,     KC_5,     KC_6,     KC_PLUS,  KC_BSPC,
-    XXXXXXX,  KC_LSFT,  KC_LCTL,  KC_LALT,  KC_LCMD,  KC_RALT,  XXXXXXX,   XXXXXXX,  KC_COLON, KC_1,     KC_2,     KC_3,     KC_EQUAL, KC_SCLN,
-                                  XXXXXXX,  _______,  XXXXXXX,  XXXXXXX,   KC_COMMA, KC_SPACE, KC_0,     KC_DOT
+    MO(_VIM), XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       KC_ASTR,  KC_4,     KC_5,     KC_6,     KC_PLUS,  KC_BSPC,
+    XXXXXXX,  XXXXXXX,  KC_LCTL,  KC_LALT,  KC_LCMD,  KC_RALT,  XXXXXXX,   XXXXXXX,  KC_COLON, KC_1,     KC_2,     KC_3,     KC_EQUAL, KC_SCLN,
+                                  XXXXXXX,  _______,  MO(_NAV), XXXXXXX,   KC_COMMA, KC_SPACE, KC_0,     KC_DOT
  ),
 
  /*
@@ -389,7 +408,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
    │         │  SHIFT  │  CTRL   │   ALT   │   CMD   │  R ALT  ││        ││        ││         │   F1    │   F2    │   F3    │         │   F11   │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │         │         │         │   ###   ││         │         │   F10   │         │
+                                 │         │   ###   │   ###   │         ││         │         │   F10   │         │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_FUNC] = LAYOUT_polydactyl(
@@ -397,31 +416,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
               XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  KC_F7,    KC_F8,    KC_F9,    XXXXXXX,
     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  KC_F4,    KC_F5,    KC_F6,    XXXXXXX,  KC_F12,
     XXXXXXX,  KC_LSFT,  KC_LCTL,  KC_LALT,  KC_LCMD,  KC_RALT,  XXXXXXX,   XXXXXXX,  XXXXXXX,  KC_F1,    KC_F2,    KC_F3,    XXXXXXX,  KC_F11,
-                                  XXXXXXX,  XXXXXXX,  XXXXXXX,  _______,   XXXXXXX,  XXXXXXX,  KC_F10,   XXXXXXX
- ),
-
- /*
-   ╺━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸
-
-   ┌───────────────────────────────────────────────────────────┐
-   │ v i m                                                     │
-   └───────────────────────────────────────────────────────────┘
-             ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
-             │         │         │         │         │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │  tab 7  │  tab 8  │  tab 9  │         │
-   ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │         │         │         │         │         │         ├─╯                ╰─┤         │  tab 4  │  tab 5  │  tab 6  │         │   bail  │
-   ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │         │         │         │         │         │         ││        ││        ││         │  tab 1  │  tab 2  │  tab 3  │         │   exit  │
-   └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │   ###   │         │         │         ││   save  │ prevtab │  tab 10 │ nexttab │
-                                 └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
-
-   [_VIM] = LAYOUT_polydactyl(
- //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
-              XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  VIM_7,    VIM_8,    VIM_9,    XXXXXXX,
-    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  VIM_4,    VIM_5,    VIM_6,    XXXXXXX,  VIM_BAIL,
-    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,   XXXXXXX,  XXXXXXX,  VIM_1,    VIM_2,    VIM_3,    XXXXXXX,  VIM_QUIT,
-                                  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,   VIM_SAVE, VIM_PREV, VIM_10,   VIM_NEXT
+                                  XXXXXXX,  _______,  _______,  XXXXXXX,   XXXXXXX,  XXXXXXX,  KC_F10,   XXXXXXX
  ),
 
  /*
@@ -446,6 +441,54 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_GRAVE, KC_CIRC,  KC_AT,    KC_EXLM,  KC_EQUAL, KC_DLR,                        XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
     KC_TILDE, KC_LT,    KC_GT,    KC_LBRC,  KC_RBRC,  KC_QUES,  XXXXXXX,   XXXXXXX,  KC_RALT,  KC_LCMD,  KC_LALT,  KC_LCTL,  XXXXXXX,  XXXXXXX,
                                   ARROW_FN, KC_PIPE,  KC_AMPR,  KC_UNDS,   XXXXXXX,  _______,  XXXXXXX,  XXXXXXX
+ ),
+
+ /*
+   ╺━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸
+
+   ┌───────────────────────────────────────────────────────────┐
+   │ v i m                                                     │
+   └───────────────────────────────────────────────────────────┘
+             ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
+             │         │         │         │         │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │  tab 7  │  tab 8  │  tab 9  │         │
+   ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
+   │   ###   │         │         │         │         │         ├─╯                ╰─┤         │  tab 4  │  tab 5  │  tab 6  │         │   bail  │
+   ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
+   │         │         │         │         │         │         ││        ││        ││         │  tab 1  │  tab 2  │  tab 3  │         │   exit  │
+   └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
+                                 │         │  tmux   │         │         ││   save  │ prevtab │  tab 10 │ nexttab │
+                                 └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
+
+   [_VIM] = LAYOUT_polydactyl(
+ //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+              XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  VIM_7,    VIM_8,    VIM_9,    XXXXXXX,
+    _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  VIM_4,    VIM_5,    VIM_6,    XXXXXXX,  VIM_BAIL,
+    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,   XXXXXXX,  XXXXXXX,  VIM_1,    VIM_2,    VIM_3,    XXXXXXX,  VIM_QUIT,
+                                  XXXXXXX,  MO(_NUM), XXXXXXX,  XXXXXXX,   VIM_SAVE, VIM_PREV, VIM_10,   VIM_NEXT
+ ),
+
+ /*
+   ╺━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸
+
+   ┌───────────────────────────────────────────────────────────┐
+   │ t m u x                                                   │
+   └───────────────────────────────────────────────────────────┘
+             ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
+             │         │         │         │         │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │  tab 7  │  tab 8  │  tab 9  │         │
+   ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
+   │   ###   │         │         │         │         │         ├─╯                ╰─┤  tmux-  │  tab 4  │  tab 5  │  tab 6  │         │         │
+   ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
+   │         │         │         │         │         │         ││        ││        ││   new   │  tab 1  │  tab 2  │  tab 3  │         │  close  │
+   └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
+                                 │         │   ###   │         │         ││   name  │ prevtab │  tab 10 │ nexttab │
+                                 └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
+
+   [_TMUX] = LAYOUT_polydactyl(
+ //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+              XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  TMUX_7,   TMUX_8,   TMUX_9,   XXXXXXX,
+    _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       TMUX_LDR, TMUX_4,   TMUX_5,   TMUX_6,   XXXXXXX,  XXXXXXX,
+    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,   XXXXXXX,  TMUX_C,   TMUX_1,   TMUX_2,   TMUX_3,   XXXXXXX,  TMUX_D,
+                                  XXXXXXX,  _______,  XXXXXXX,  XXXXXXX,   TMUX_A,   TMUX_P,   TMUX_10,  TMUX_N
  ),
 
  /*
@@ -479,21 +522,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    │ k e y b o a r d                                           │
    └───────────────────────────────────────────────────────────┘
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
-             │  qwerty │         │ scrfile │         │  launch │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │
+             │  qwerty │         │ scrfile │ scrcopy │  launch │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │  brt +  │         │         │ scrcopy │         │         ├─╯                ╰─┤         │         │         │         │         │         │
+   │  brt +  │         │         │         │         │         ├─╯                ╰─┤  dvorak │         │         │         │         │         │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
-   │  brt -  │  jiggle │ micmute │ colemak │  dvorak │         ││  rgb   ││        ││         │         │         │         │         │         │
+   │  brt -  │  jiggle │ micmute │ colemak │         │         ││  rgb   ││        ││         │         │         │         │         │   ###   │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
-                                 │   lock  │         │ caps lk │  flash  ││         │         │         │   ###   │
+                                 │   lock  │ num lk  │ caps lk │  flash  ││         │         │         │         │
                                  └─────────┴─────────┴─────────┴─────────┘└─────────┴─────────┴─────────┴─────────┘ */
 
    [_KEYBD] = LAYOUT_polydactyl(
  //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
-              QWERTY,   XXXXXXX,  SCRN_FN,  XXXXXXX,  LAUNCHPD,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    KC_BRMU,  XXXXXXX,  XXXXXXX,  SCRN_CP,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    KC_BRMD,  JIGGLE,   MICMUTE,  COLEMAK,  DVORAK,   XXXXXXX,  RGB_TOG,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-                                  SCRN_LK,  XXXXXXX,  KC_CAPS,  QK_BOOT,   XXXXXXX,  XXXXXXX,  XXXXXXX,  _______
+              QWERTY,   XXXXXXX,  SCRN_FN,  SCRN_CP,  LAUNCHPD,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    KC_BRMU,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                       DVORAK,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    KC_BRMD,  JIGGLE,   MICMUTE,  COLEMAK,  XXXXXXX,  XXXXXXX,  RGB_TOG,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  _______,
+                                  SCRN_LK,  KC_NUM,   KC_CAPS,  QK_BOOT,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX
  ),
 
  /*
@@ -553,31 +596,37 @@ const ledmap PROGMEM ledmaps[] = {
                     ______, ______, ______, ______, ______,                 GRN L3, ______, ______, ______, ______,
             ______, ______, ______, ______, ______, ______,                 BLU L1, SKY L3, SKY L3, SKY L3, BLU L3, RED L2,
             ______, WHT L1, WHT L1, WHT L1, WHT L1, WHT L1,                 GRN L1, ______, SKY L3, ______, ______, PNK L3,
-                                    ______, ______, SKY L4, ______, ______, WHT L3, ______, ______
+                                    ______, ORG L1, SKY L4, ______, ______, WHT L3, ______, ______
             ),
     [_NUM] = RGB_MATRIX_LAYOUT_LEDMAP(
                     ______, ______, ______, ______, ______,                 YLW L2, GRN L3, GRN L3, GRN L3, SKY L1,
-            ______, ______, ______, ______, ______, ______,                 YLW L3, GRN L2, GRN L2, GRN L2, SKY L2, RED L2,
-            ______, WHT L1, WHT L1, WHT L1, WHT L1, WHT L1,                 WHT L3, GRN L1, GRN L1, GRN L1, YLW L2, WHT L2,
-                                    ______, GRN L4, ______, ______, WHT L1, WHT L3, GRN L1, WHT L2
+            VLT L1, ______, ______, ______, ______, ______,                 YLW L3, GRN L2, GRN L2, GRN L2, SKY L2, RED L2,
+            ______, ______, WHT L1, WHT L1, WHT L1, WHT L1,                 WHT L3, GRN L1, GRN L1, GRN L1, YLW L2, WHT L2,
+                                    ______, GRN L4, ORG L1, ______, WHT L1, WHT L3, GRN L1, WHT L2
             ),
     [_FUNC] = RGB_MATRIX_LAYOUT_LEDMAP(
                     ______, ______, ______, ______, ______,                 ______, ORG L3, ORG L3, ORG L3, ______,
             ______, ______, ______, ______, ______, ______,                 ______, ORG L2, ORG L2, ORG L2, ______, ORG L2,
             ______, WHT L1, WHT L1, WHT L1, WHT L1, WHT L1,                 ______, ORG L1, ORG L1, ORG L1, ______, ORG L1,
-                                    ______, ______, ______, ORG L4, ______, ______, ORG L1, ______
-            ),
-    [_VIM] = RGB_MATRIX_LAYOUT_LEDMAP(
-                    ______, ______, ______, ______, ______,                 ______, PUR L3, PUR L3, PUR L3, ______,
-            ______, ______, ______, ______, ______, ______,                 ______, PUR L2, PUR L2, PUR L2, ______, VLT L3,
-            ______, ______, ______, ______, ______, ______,                 ______, PUR L1, PUR L1, PUR L1, ______, RED L1,
-                                    PUR L4, ______, ______, ______, GRN L1, BLU L2, PUR L1, BLU L3
+                                    ______, ORG L4, ORG L4, ______, ______, ______, ORG L1, ______
             ),
     [_SYM] = RGB_MATRIX_LAYOUT_LEDMAP(
                     ______, BLU L2, LIM L2, GRN L1, ______,                 ______, ______, ______, ______, ______,
             WHT L1, ORG L3, SKY L3, WHT L2, YLW L3, GRN L3,                 ______, ______, ______, ______, ______, ______,
             WHT L1, BLU L1, BLU L2, ORG L1, ORG L1, YLW L1,                 WHT L1, WHT L1, WHT L1, WHT L1, ______, ______,
                                     PUR L3, WHT L3, BLU L3, WHT L1, ______, SKY L4, ______, ______
+            ),
+    [_VIM] = RGB_MATRIX_LAYOUT_LEDMAP(
+                    ______, ______, ______, ______, ______,                 ______, PUR L3, PUR L3, PUR L3, ______,
+            PUR L4, ______, ______, ______, ______, ______,                 ______, PUR L2, PUR L2, PUR L2, ______, VLT L3,
+            ______, ______, ______, ______, ______, ______,                 ______, PUR L1, PUR L1, PUR L1, ______, RED L1,
+                                    ______, VLT L1, ______, ______, GRN L1, BLU L2, PUR L1, BLU L3
+            ),
+    [_TMUX] = RGB_MATRIX_LAYOUT_LEDMAP(
+                    ______, ______, ______, ______, ______,                 ______, VLT L3, VLT L3, VLT L3, ______,
+            VLT L4, ______, ______, ______, ______, ______,                 WHT L1, VLT L2, VLT L2, VLT L2, ______, ______,
+            ______, ______, ______, ______, ______, ______,                 GRN L3, VLT L1, VLT L1, VLT L1, ______, RED L1,
+                                    ______, VLT L4, ______, ______, GRN L1, BLU L2, VLT L1, BLU L3
             ),
     [_MOUSE] = RGB_MATRIX_LAYOUT_LEDMAP(
                     ______, ______, ______, ______, ______,                 ______, ______, ______, ______, ______,
@@ -587,10 +636,10 @@ const ledmap PROGMEM ledmaps[] = {
             ),
     // Note: to test all the colors you can comment out the keyboard map and use the all-colors map instead
     [_KEYBD] = RGB_MATRIX_LAYOUT_LEDMAP(
-                    PNK L3, ______, GRN L3, ______, ORG L5,                 YLW L3, YLW L1, LIM L1, LIM L3, ______,
-            YLW L3, ______, ______, BLU L3, ______, ______,                 ORG L3, ORG L1, GRN L1, GRN L3, SKY L3, SKY L1,
-            YLW L1, ORG L1, PUR L3, PNK L3, PNK L3, ______,                 RED L3, RED L1, BLU L1, BLU L3, PUR L3, PUR L1,
-                                    RED L5, ______, RED L1, VLT L5, PNK L1, PNK L3, VLT L1, VLT L3
+                    PNK L3, ______, GRN L3, BLU L3, ORG L5,                 ______, ______, ______, ______, ______,
+            YLW L3, ______, ______, ______, ______, ______,                 PNK L3, ______, ______, ______, ______, ______,
+            YLW L1, ORG L1, PUR L3, PNK L3, PNK L3, ______,                 ______, ______, ______, ______, ______, VLT L4,
+                                    RED L5, GRN L1, RED L1, VLT L5, ______, ______, ______, ______
             /*         RED L1, ORG L1, YLW L1, LIM L1, GRN L1,                 SKY L1, BLU L1, PUR L1, VLT L1, PNK L1, */
             /* ______, RED L3, ORG L3, YLW L3, LIM L3, GRN L3,                 SKY L3, BLU L3, PUR L3, VLT L3, PNK L3, ______, */
             /* WHT L1, RED L5, ORG L5, YLW L5, LIM L5, GRN L5,                 SKY L5, BLU L5, PUR L5, VLT L5, PNK L5, WHT L1, */
@@ -790,7 +839,9 @@ void render_os_lock_status(void) {
 int layerstate = 0;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    layerstate = get_highest_layer(state);
+    int tristate = update_tri_layer_state(state, _NUM, _NAV, _FUNC);
+    tristate = update_tri_layer_state(tristate, _NUM, _VIM, _TMUX);
+    layerstate = get_highest_layer(tristate);
     switch (layerstate) {
         case _COLEMAK:
             strcpy ( layer_state_str, "COLEMAK");
@@ -813,12 +864,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             clear_oneshot_mods();
             strcpy ( layer_state_str, "FUNCTION");
             break;
-        case _VIM:
-            strcpy ( layer_state_str, "VIM");
-            break;
         case _SYM:
             clear_oneshot_mods();
             strcpy ( layer_state_str, "SYMBOL");
+            break;
+        case _VIM:
+            strcpy ( layer_state_str, "VIM");
+            break;
+        case _TMUX:
+            strcpy ( layer_state_str, "TMUX");
             break;
         case _MOUSE:
             strcpy ( layer_state_str, "MOUSE");
@@ -832,8 +886,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     if (dmacro_num < 1) {
         strcpy ( o_text, layer_state_str );
     }
-    return state;
-    // return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+    return tristate;
 }
 
 
@@ -1101,6 +1154,90 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
 
 // ┌───────────────────────────────────────────────────────────┐
+// │t m u x   m a c r o s                                      │
+// └───────────────────────────────────────────────────────────┘
+
+        case TMUX_1:
+            tap_code16(TMUX);
+            tap_code(KC_1);
+            return false;
+
+        case TMUX_2:
+            tap_code16(TMUX);
+            tap_code(KC_2);
+            return false;
+
+        case TMUX_3:
+            tap_code16(TMUX);
+            tap_code(KC_3);
+            return false;
+
+        case TMUX_4:
+            tap_code16(TMUX);
+            tap_code(KC_4);
+            return false;
+
+        case TMUX_5:
+            tap_code16(TMUX);
+            tap_code(KC_5);
+            return false;
+
+        case TMUX_6:
+            tap_code16(TMUX);
+            tap_code(KC_6);
+            return false;
+
+        case TMUX_7:
+            tap_code16(TMUX);
+            tap_code(KC_7);
+            return false;
+
+        case TMUX_8:
+            tap_code16(TMUX);
+            tap_code(KC_8);
+            return false;
+
+        case TMUX_9:
+            tap_code16(TMUX);
+            tap_code(KC_9);
+            return false;
+
+        case TMUX_10:
+            tap_code16(TMUX);
+            tap_code(KC_0);
+            return false;
+
+        case TMUX_A:
+            tap_code16(TMUX);
+            tap_code(KC_A);
+            return false;
+
+        case TMUX_C:
+            tap_code16(TMUX);
+            tap_code(KC_C);
+            return false;
+
+        case TMUX_D:
+            tap_code16(TMUX);
+            tap_code(KC_D);
+            return false;
+
+        case TMUX_N:
+            tap_code16(TMUX);
+            tap_code(KC_N);
+            return false;
+
+        case TMUX_P:
+            tap_code16(TMUX);
+            tap_code(KC_P);
+            return false;
+
+        case TMUX_LDR:
+            tap_code16(TMUX);
+            return false;
+
+
+// ┌───────────────────────────────────────────────────────────┐
 // │ p r o d u c t i v i t y                                   │
 // └───────────────────────────────────────────────────────────┘
 
@@ -1228,30 +1365,6 @@ void td_np_reset(tap_dance_state_t *state, void *user_data) {
     }
 }
 
-// FN asterisk
-static td_tap_t td_fa_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
-
-void td_fa_finished(tap_dance_state_t *state, void *user_data) {
-    td_fa_state.state = cur_dance(state);
-    switch (td_fa_state.state) {
-        case TD_HOLD: clear_oneshot_mods(); layer_on(_FUNC); break;
-        case TD_TAP: SEND_STRING("*"); break;
-        case TD_DOUBLE_TAP: SEND_STRING("**"); break;
-        case TD_MORE: SEND_STRING("***"); break;
-        default: break;
-    }
-}
-
-void td_fa_reset(tap_dance_state_t *state, void *user_data) {
-    switch (td_fa_state.state) {
-        case TD_HOLD: layer_off(_FUNC); break;
-        default: break;
-    }
-}
-
 // MOUSE paren
 static td_tap_t td_mp_state = {
     .is_press_action = true,
@@ -1279,7 +1392,6 @@ void td_mp_reset(tap_dance_state_t *state, void *user_data) {
 tap_dance_action_t tap_dance_actions[] = {
     [TD_NAV_SHIFT_CAPSWORD] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_nsc_finished, td_nsc_reset),
     [TD_NUM_PAREN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_np_finished, td_np_reset),
-    [TD_FN_ASTERISK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_fa_finished, td_fa_reset),
     [TD_MOUSE_PAREN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_mp_finished, td_mp_reset),
 };
 
@@ -1315,7 +1427,27 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 // └───────────────────────────────────────────────────────────┘
 
     } else if (index == 1) {
-        if (clockwise) {
+        if (layerstate == _NAV) {
+            if (clockwise) {
+                tap_code16(LCTL(KC_TAB));
+            } else {
+                tap_code16(LSFT(LCTL(KC_TAB)));
+            }
+        } else if (layerstate == _VIM) {
+            tap_code(KC_ESC);
+            if (clockwise) {
+                SEND_STRING("gt");
+            } else {
+                SEND_STRING("gT");
+            }
+        } else if (layerstate == _TMUX) {
+            tap_code16(TMUX);
+            if (clockwise) {
+                tap_code(KC_N);
+            } else {
+                tap_code(KC_P);
+            }
+        } else if (clockwise) {
             tap_code(KC_VOLU);
         } else {
             tap_code(KC_VOLD);
